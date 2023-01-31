@@ -1,0 +1,32 @@
+version: '3'
+
+volumes:
+  db:
+    name: elastics-kibana-data
+
+
+services:
+  elastics:
+    image:  docker.elastic.co/elasticsearch/elasticsearch:7.17.8
+    container_name: ${project_name}-elastics
+    env_file:
+      - .env
+    environment:
+      - discovery.type=single-node
+    volumes:
+      - db:/usr/share/elasticsearch/data
+    mem_limit: 256M
+    ports:
+      - 9200:9200
+  
+  kibana:
+    image: docker.elastic.co/kibana/kibana:7.17.8
+    container_name: ${project_name}-kibana
+    env_file:
+      - .env
+    environment:
+      - ELASTICSEARCH_HOSTS=http://elastics:9200
+    mem_limit: 256M
+    ports:
+      - 5601:5601
+
